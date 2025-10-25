@@ -1,0 +1,23 @@
+# Build folders
+build/
+
+# Build artifacts
+/build/
+/build-*/
+
+/CMakeFiles/
+/CMakeCache.txt
+/*.vcxproj*
+
+# Conan
+conanbuildinfo.*
+.conan/
+
+# IDEs
+.vscode/
+.idea/
+
+# System files
+*.log
+*.swp
+.DS_Store
