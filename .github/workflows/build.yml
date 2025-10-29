@@ -1,0 +1,56 @@
+name: CMake Build & Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python (for Conan)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Detect Conan profile
+        run: conan profile detect --force
+
+      - name: Install dependencies (Conan)
+        run: conan install . --output-folder=build --build=missing
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build --config Debug
+
+      - name: Run tests
+        run: |
+          ctest --test-dir build --output-on-failure
+        shell: bash
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 8051-simulator-${{ matrix.os }}
+          path: |
+            build/Debug/*
+            build/*.exe
+            build/*.out
+            build/*.dll
+            build/*.so
