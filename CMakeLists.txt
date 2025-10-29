@@ -15,6 +15,8 @@ find_package(Catch2 REQUIRED)
 add_executable(8051-simulator
     src/main.cpp
     src/cpu.cppm
+    src/register8.cppm
+    src/register16.cppm
     src/memory.cppm
     src/instruction.cppm
     src/io.cppm
@@ -23,8 +25,10 @@ add_executable(8051-simulator
 
 add_executable(8051-simulator-tests
     tests/test_cpu.cpp
+    tests/test_register.cpp
     src/cpu.cppm
-    src/memory.cppm
+    src/register8.cppm
+    src/register16.cppm
 )
 
 target_link_libraries(8051-simulator-tests PRIVATE Catch2::Catch2WithMain)

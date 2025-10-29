@@ -3,6 +3,9 @@
 #include <cstdint>
 #include <iostream>
 
+import register8;
+import register16;
+
 export module cpu;
 
 export class CPU
@@ -10,25 +13,29 @@ export class CPU
 public:
     CPU();
     void reset();
-    uint8_t get_register(const std::string& name) const;
+    Register get_register(const std::string& name) const;
 private:
-    std::array<uint8_t, 8> registers;
+    Register acc{"A"};         // Accumulator A
+    Register b{"B"};           // Register B
+    Register psw{"PSW"};       // Program Status Word
+    Register sp{"SP"};         // Stack Pointer
+    Register16 pc{"PC"};       // Program Counter
+    Register16 dptr{"DPTR"};   // Data Pointer
+    std::array<Register, 8> r{Register("R0"), Register("R1"), Register("R2"), Register("R3"),
+                              Register("R4"), Register("R5"), Register("R6"), Register("R7")}; // R0–R7
 };
 
 module :private;
 
 CPU::CPU()
 {
-    reset();
 }
 
 void CPU::reset()
 {
-    registers.fill(0);
 }
 
-uint8_t CPU::get_register(const std::string& name) const
+Register CPU::get_register(const std::string& name) const
 {
-    if (name == "A") return registers[0];
-    return 0;
+    return acc;
 }
