@@ -29,8 +29,8 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
 
-      - name: Install dependencies (Conan)
-        run: conan install . --output-folder=build --build=missing
+      - name: Install dependencies (Conan + CMakeToolchain)
+        run: conan install . --output-folder=build --build=missing -g CMakeToolchain
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake
@@ -39,7 +39,8 @@ jobs:
         run: cmake --build build --config Debug
 
       - name: Run tests
-        run: ctest --test-dir build --output-on-failure
+        run: |
+          ctest --test-dir build --output-on-failure
         shell: bash
 
       - name: Upload build artifacts
