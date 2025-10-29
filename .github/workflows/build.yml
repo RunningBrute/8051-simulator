@@ -32,16 +32,38 @@ jobs:
       - name: Install dependencies (Conan + CMakeToolchain)
         run: conan install . --output-folder=build --build=missing -g CMakeToolchain
 
+      - name: List build folder (debug)
+        run: |
+          echo "Files in build:"
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            dir build
+          else
+            ls -l build
+          fi
+
       - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -G "Visual Studio 17 2022"
+          else
+            cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake
+          fi
 
       - name: Build
-        run: cmake --build build --config Debug
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            cmake --build build --config Debug
+          else
+            cmake --build build
+          fi
 
       - name: Run tests
         run: |
-          ctest --test-dir build --output-on-failure
-        shell: bash
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            ctest --test-dir build --output-on-failure -C Debug
+          else
+            ctest --test-dir build --output-on-failure
+          fi
 
       - name: Upload build artifacts
         if: success()
