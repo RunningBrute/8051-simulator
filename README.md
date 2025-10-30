@@ -1,6 +1,9 @@
 # 8051 Simulator
 
-![Build](https://github.com/RunningBrute/8051-simulator/actions/workflows/build.yml/badge.svg)
+[![Build Linux](https://github.com/RunningBrute/8051-simulator/actions/workflows/build-linux.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/build-linux.yml)
+[![Test Linux](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-linux.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-linux.yml)
+[![Build Windows](https://github.com/RunningBrute/8051-simulator/actions/workflows/build-windows.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/build-windows.yml)
+[![Test Windows](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-windows.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-windows.yml)
 
 A basic **Intel 8051 microcontroller simulator**. This project aims to emulate
 the 8051 CPU architecture at the register and instruction level — purely in software,

@@ -1,0 +1,21 @@
+name: Test (Linux)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build (re-use)
+        run: |
+          mkdir -p build
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build -j
+
+      - name: Run tests
+        run: ./build/Debug/8051-simulator-tests

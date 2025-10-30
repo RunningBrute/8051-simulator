@@ -1,0 +1,23 @@
+name: Test (Windows)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build (re-use)
+        shell: pwsh
+        run: |
+          mkdir build
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build --config Debug -- /m
+
+      - name: Run tests
+        shell: pwsh
+        run: ./build/Debug/8051-simulator-tests.exe
