@@ -1,5 +1,5 @@
-#include <cstdint>;
-#include <string>;
+#include <cstdint>
+#include <string>
 
 export module register8;
 
