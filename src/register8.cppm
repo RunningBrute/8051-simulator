@@ -3,10 +3,10 @@
 
 export module register8;
 
-export class Register
+export class Register8
 {
 public:
-    Register(std::string name, uint8_t initial_value = 0)
+    Register8(std::string name, uint8_t initial_value = 0)
         : name(std::move(name)),
           value(initial_value)
     {}

@@ -4,7 +4,7 @@ import register8;
 import register16;
 
 TEST_CASE("Register stores and retrieves values", "[register]") {
-    Register reg{"A"};
+    Register8 reg{"A"};
     reg.write(0x55);
     REQUIRE(reg.read() == 0x55);
 
@@ -13,7 +13,7 @@ TEST_CASE("Register stores and retrieves values", "[register]") {
 }
 
 TEST_CASE("Register has independent state", "[register]") {
-    Register r1{"A"}, r2{"B"};
+    Register8 r1{"A"}, r2{"B"};
     r1.write(0x11);
     r2.write(0x22);
 
@@ -23,9 +23,9 @@ TEST_CASE("Register has independent state", "[register]") {
 }
 
 TEST_CASE("Register supports copy semantics", "[register]") {
-    Register r1{"A"};
+    Register8 r1{"A"};
     r1.write(0x77);
-    Register r2 = r1;
+    Register8 r2 = r1;
     REQUIRE(r2.read() == 0x77);
 }
 
