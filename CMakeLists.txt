@@ -25,15 +25,18 @@ add_executable(8051-simulator
 )
 
 add_executable(8051-simulator-tests
+    tests/test_system.cpp
     tests/test_cpu.cpp
     tests/test_memory.cpp
     tests/test_register.cpp
     tests/test_flag_register.cpp
+    src/system.cppm
     src/cpu.cppm
     src/memory.cppm
     src/registers/register8.cppm
     src/registers/register16.cppm
     src/registers/flag_register.cppm
+    src/io.cppm
 )
 
 target_link_libraries(8051-simulator-tests PRIVATE Catch2::Catch2WithMain)
