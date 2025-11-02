@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <string>
 
-export module flag_register;
+export module registers.flag_register;
 
 export class FlagRegister
 {

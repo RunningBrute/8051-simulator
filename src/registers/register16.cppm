@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <string>
 
-export module register16;
+export module registers.register16;
 
 export class Register16
 {

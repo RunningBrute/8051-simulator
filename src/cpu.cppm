@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <iostream>
 
-import register8;
-import register16;
-import flag_register;
+import registers.register8;
+import registers.register16;
+import registers.flag_register;
 
 export module cpu;
 

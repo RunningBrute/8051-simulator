@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
-import register8;
-import register16;
+import registers.register8;
+import registers.register16;
 
 TEST_CASE("Register stores and retrieves values", "[register]") {
     Register8 reg{"A"};

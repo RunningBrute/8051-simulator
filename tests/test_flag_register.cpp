@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-import flag_register;
+import registers.flag_register;
 
 TEST_CASE("FlagRegister initializes correctly", "[flag_register]") {
     FlagRegister psw("PSW");
