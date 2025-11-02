@@ -1,4 +1,4 @@
-name: Build (Linux)
+name: Build (Linux Modules)
 
 on:
   push:
@@ -9,14 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
+      # 3️⃣ Cache Conan
       - name: Cache Conan
         uses: actions/cache@v4
         with:
@@ -24,22 +27,37 @@ jobs:
           key: ${{ runner.os }}-conan-${{ hashFiles('conanfile.*') }}
           restore-keys: ${{ runner.os }}-conan-
 
-      - name: Install system dependencies
+      # 4️⃣ Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential python3-dev git
+          sudo apt-get install -y cmake ninja-build g++ python3-dev git
 
+      # 5️⃣ Install Conan
       - name: Install Conan
         run: python -m pip install --upgrade pip && pip install conan
 
-      - name: Create default Conan profile
+      # 6️⃣ Create default Conan profile
+      - name: Create Conan profile
         run: conan profile detect --force
 
-      - name: Install dependencies with Conan
+      # 7️⃣ Install dependencies
+      - name: Install Conan dependencies
         run: conan install . --output-folder=build --build=missing
 
-      - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/build/Release/generators/conan_toolchain.cmake
+      # 8️⃣ Debug: list build folder
+      - name: List build folder
+        run: ls -R build
 
+      # 9️⃣ Configure CMake with modules flags
+      - name: Configure CMake
+        run: cmake -S . -B build \
+          -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_TOOLCHAIN_FILE=build/generators/conan_toolchain.cmake \
+          -DCMAKE_CXX_STANDARD=20 \
+          -DCMAKE_CXX_FLAGS="-fmodules-ts"
+
+      # 🔟 Build
       - name: Build
-        run: cmake --build build -j
+        run: cmake --build build --parallel
