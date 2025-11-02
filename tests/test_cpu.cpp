@@ -4,7 +4,8 @@ import cpu;
 
 TEST_CASE("CPU reset sets all registers to initial values", "[cpu]")
 {
-    CPU cpu;
+    std::vector<uint8_t> ram(65536);
+    CPU cpu(ram);
 
     cpu.get(Register8Name::A).write(0xFF);
     cpu.get(Register8Name::B).write(0xFF);
@@ -28,4 +29,17 @@ TEST_CASE("CPU reset sets all registers to initial values", "[cpu]")
     REQUIRE(cpu.get(Register16Name::DPTR).read() == 0x0000);
 
     REQUIRE(cpu.get(FlagName::PSW).read() == 0x00);
+}
+
+TEST_CASE("CPU executes NOP incrementing PC")
+{
+    std::vector<uint8_t> ram(65536);
+    ram[0] = 0x00;
+
+    CPU cpu(ram);
+    cpu.reset();
+
+    REQUIRE(cpu.get(Register16Name::PC).read() == 0x0000);
+    cpu.step();
+    REQUIRE(cpu.get(Register16Name::PC).read() == 0x0001);
 }

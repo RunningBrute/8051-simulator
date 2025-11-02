@@ -1,11 +1,11 @@
 #include <iostream>
 
-import cpu;
+import system;
 
 int main()
 {
-    CPU cpu;
-    cpu.reset();
+    System system;
+    system.reset();
 
     std::cout << "8051 Simulator started successfully!";
     return 0;

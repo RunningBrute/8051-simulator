@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdint>
 #include <iostream>
+#include <span>
 
 import registers.register8;
 import registers.register16;
@@ -18,8 +19,10 @@ export enum class FlagName { PSW };
 export class CPU
 {
 public:
-    CPU();
+    CPU(std::span<uint8_t> memory);
+    
     void reset();
+    void step();
     
     Register8& get(Register8Name r);
     const Register8& get(Register8Name r) const;
@@ -30,6 +33,7 @@ public:
     FlagRegister& get(FlagName f);
     const FlagRegister& get(FlagName f) const;
 private:
+
     Register8 acc{"A"};        // Accumulator A
     Register8 b{"B"};          // Register B
     Register8 sp{"SP"};        // Stack Pointer
@@ -38,13 +42,18 @@ private:
     FlagRegister psw{"PSW"};   // Program Status Word
     RegisterBank rbank{Register8("R0"), Register8("R1"), Register8("R2"), Register8("R3"),
                        Register8("R4"), Register8("R5"), Register8("R6"), Register8("R7")}; // Register bank R0 - R7
+
+    std::span<uint8_t> memory;
+
+    uint8_t fetch8();
+    uint16_t fetch16();
 };
 
 module :private;
 
-CPU::CPU()
-{
-}
+CPU::CPU(std::span<uint8_t> memory) 
+    : memory(memory)
+{}
 
 void CPU::reset()
 {
@@ -56,6 +65,33 @@ void CPU::reset()
     psw.write(0x00);
     for (auto& r : rbank)
         r.write(0x00);
+}
+
+void CPU::step()
+{
+    auto opcode = fetch8();
+
+    switch(opcode)
+    {
+        case 0x00: // NOP
+            return;
+        default:
+            throw std::runtime_error("Unimplemented opcode");
+    }
+}
+
+uint8_t CPU::fetch8()
+{
+    uint8_t v = memory[pc.read()];
+    pc.write(pc.read()+1);
+    return v;
+}
+
+uint16_t CPU::fetch16()
+{
+    uint16_t lo = fetch8();
+    uint16_t hi = fetch8();
+    return (hi<<8)|lo;
 }
 
 Register8& CPU::get(Register8Name r)
@@ -110,3 +146,4 @@ const FlagRegister& CPU::get(FlagName f) const
 {
     return const_cast<CPU*>(this)->get(f);
 }
+   

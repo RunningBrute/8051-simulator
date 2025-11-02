@@ -1,3 +1,5 @@
+#include <span>
+
 export module system;
 
 import cpu;
@@ -17,7 +19,10 @@ public:
 
 module :private;
 
-System::System() = default;
+System::System()
+    : memory(),
+      cpu(std::span<uint8_t>(memory.data(), memory.size()))
+{}
 
 void System::reset()
 {
