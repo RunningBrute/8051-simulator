@@ -1,4 +1,6 @@
+module;
 #include <span>
+#include <cstdint>
 
 export module system;
 
@@ -21,7 +23,7 @@ module :private;
 
 System::System()
     : memory(),
-      cpu(std::span<uint8_t>(memory.data(), memory.size()))
+      cpu(std::span<std::uint8_t>(memory.data(), memory.size()))
 {}
 
 void System::reset()

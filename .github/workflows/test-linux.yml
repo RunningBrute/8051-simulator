@@ -1,21 +1,30 @@
-name: Test (Linux)
+name: Test Linux (Catch2 + C++23 Modules)
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  test-linux:
     runs-on: ubuntu-latest
+    name: Run tests on Linux (Clang)
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build (re-use)
+      - name: Install dependencies
         run: |
-          mkdir -p build
-          cmake -B build -DCMAKE_BUILD_TYPE=Debug
-          cmake --build build -j
+          sudo apt-get update
+          sudo apt-get install -y clang ninja-build cmake
 
-      - name: Run tests
-        run: ./build/Debug/8051-simulator-tests
+      - name: Configure CMake
+        run: cmake -B build -G Ninja -DCMAKE_CXX_STANDARD=23 -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build tests
+        run: cmake --build build --target 8051-simulator-tests
+
+      - name: Run Catch2 tests
+        run: ctest --test-dir build --output-on-failure

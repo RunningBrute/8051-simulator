@@ -1,3 +1,4 @@
+module;
 #include <array>
 #include <string>
 #include <cstdint>

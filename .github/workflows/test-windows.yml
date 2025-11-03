@@ -1,23 +1,40 @@
-name: Test (Windows)
+name: Test Windows (Catch2 + MSVC)
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  test-windows:
     runs-on: windows-latest
+    name: Run tests on Windows (MSVC)
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build (re-use)
-        shell: pwsh
-        run: |
-          mkdir build
-          cmake -B build -DCMAKE_BUILD_TYPE=Debug
-          cmake --build build --config Debug -- /m
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
 
-      - name: Run tests
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G "Ninja" `
+            -DCMAKE_BUILD_TYPE=Debug `
+            -DCMAKE_CXX_STANDARD=23 `
+            -DCMAKE_CXX_FLAGS="/std:c++latest /EHsc /W4"
         shell: pwsh
-        run: ./build/Debug/8051-simulator-tests.exe
+
+      - name: Build tests
+        run: cmake --build build --target 8051-simulator-tests --config Debug
+        shell: pwsh
+
+      - name: Run Catch2 tests
+        run: ctest --test-dir build --output-on-failure
+        shell: pwsh

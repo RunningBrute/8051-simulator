@@ -1,63 +1,41 @@
-name: Build (Linux Modules)
+name: Build Linux (C++23 Modules with Clang)
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-linux:
+    name: Build with Clang (Modules)
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      # 3️⃣ Cache Conan
-      - name: Cache Conan
-        uses: actions/cache@v4
-        with:
-          path: ~/.conan2
-          key: ${{ runner.os }}-conan-${{ hashFiles('conanfile.*') }}
-          restore-keys: ${{ runner.os }}-conan-
-
-      # 4️⃣ Install system dependencies
-      - name: Install dependencies
+      - name: Install Clang 18 + tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build g++ python3-dev git
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y clang-18 clang-tools-18 lld-18 ninja-build cmake python3-pip catch2
+          update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+          ls /usr/bin/clang-scan-deps* || echo "❌ clang-scan-deps not found!"
+          clang++ --version
+          cmake --version
 
-      # 5️⃣ Install Conan
-      - name: Install Conan
-        run: python -m pip install --upgrade pip && pip install conan
+      - name: Configure (Modules)
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_CXX_STANDARD=23 \
+            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE \
+            -DCMAKE_CXX_MODULE_CACHE_DIR=build/module-cache \
+            -DCMAKE_BUILD_TYPE=Debug
 
-      # 6️⃣ Create default Conan profile
-      - name: Create Conan profile
-        run: conan profile detect --force
-
-      # 7️⃣ Install dependencies
-      - name: Install Conan dependencies
-        run: conan install . --output-folder=build --build=missing
-
-      # 8️⃣ Debug: list build folder
-      - name: List build folder
-        run: ls -R build
-
-      # 9️⃣ Configure CMake with modules flags
-      - name: Configure CMake
-        run: cmake -S . -B build \
-          -G Ninja \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_TOOLCHAIN_FILE=build/generators/conan_toolchain.cmake \
-          -DCMAKE_CXX_STANDARD=20 \
-          -DCMAKE_CXX_FLAGS="-fmodules-ts"
-
-      # 🔟 Build
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --verbose
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
