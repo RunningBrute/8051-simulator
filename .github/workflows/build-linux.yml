@@ -17,7 +17,7 @@ jobs:
 
       - name: Install Clang 18 + tools
         run: |
-          apt-get update
+          sudo apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y clang-18 clang-tools-18 lld-18 ninja-build cmake python3-pip catch2
           update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
           update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
