@@ -8,23 +8,64 @@ on:
 
 jobs:
   test-linux:
-    runs-on: ubuntu-latest
-    name: Run tests on Linux (Clang)
+    runs-on: ubuntu-22.04
+    name: Run tests on Linux (Clang + Catch2 v3)
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install Clang 18 + CMake ≥ 3.28 + Ninja ≥ 1.11 + Catch2 v3
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang ninja-build cmake
+          sudo apt-get install -y wget software-properties-common gnupg lsb-release unzip git
+
+          # LLVM repo for Clang 18
+          wget https://apt.llvm.org/llvm.sh -O llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 18
+          rm llvm.sh
+
+          # CMake from Kitware repo
+          sudo apt-get purge -y cmake || true
+          sudo apt-get install -y apt-transport-https ca-certificates
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://apt.kitware.com/keys/kitware-archive-latest.asc | \
+            sudo gpg --dearmor -o /etc/apt/keyrings/kitware-archive-keyring.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | \
+            sudo tee /etc/apt/sources.list.d/kitware.list
+          sudo apt-get update -y
+          sudo apt-get install -y cmake
+
+          # Ninja 1.12
+          sudo apt-get remove -y ninja-build || true
+          wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip
+          sudo unzip ninja-linux.zip -d /usr/local/bin/
+          sudo chmod +x /usr/local/bin/ninja
+          ninja --version
+
+          # Clang 18 & LLD
+          sudo apt-get install -y clang-18 clang-tools-18 lld-18
+
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+          # Catch2 v3 from source
+          git clone --branch v3.6.0 https://github.com/catchorg/Catch2.git
+          cmake -S Catch2 -B Catch2/build -DCMAKE_INSTALL_PREFIX=/usr
+          sudo cmake --build Catch2/build --target install -j$(nproc)
+          rm -rf Catch2
 
       - name: Configure CMake
-        run: cmake -B build -G Ninja -DCMAKE_CXX_STANDARD=23 -DCMAKE_BUILD_TYPE=Debug
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_CXX_STANDARD=23 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE
 
       - name: Build tests
-        run: cmake --build build --target 8051-simulator-tests
+        run: cmake --build build --target 8051-simulator-tests --verbose
 
       - name: Run Catch2 tests
         run: ctest --test-dir build --output-on-failure

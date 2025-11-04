@@ -9,14 +9,23 @@ on:
 jobs:
   test-windows:
     runs-on: windows-latest
-    name: Run tests on Windows (MSVC)
+    name: Run tests on Windows (MSVC + Catch2 v3)
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
+      - name: Install dependencies
+        run: |
+          choco install ninja git -y
+        shell: pwsh
+
+      - name: Install Catch2 v3 from source
+        run: |
+          git clone --branch v3.6.0 https://github.com/catchorg/Catch2.git
+          cmake -S Catch2 -B Catch2/build -DCMAKE_INSTALL_PREFIX="C:/Catch2"
+          cmake --build Catch2/build --config Release --target install
+        shell: pwsh
 
       - name: Set up MSVC environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -28,13 +37,21 @@ jobs:
           cmake -B build -G "Ninja" `
             -DCMAKE_BUILD_TYPE=Debug `
             -DCMAKE_CXX_STANDARD=23 `
-            -DCMAKE_CXX_FLAGS="/std:c++latest /EHsc /W4"
+            -DCMAKE_PREFIX_PATH="C:/Catch2/lib/cmake/Catch2" `
+            -DCMAKE_CXX_FLAGS="/std:c++latest /EHsc /W4 /permissive-" `
+            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE
         shell: pwsh
 
       - name: Build tests
-        run: cmake --build build --target 8051-simulator-tests --config Debug
+        run: cmake --build build --target 8051-simulator-tests --config Debug --verbose
         shell: pwsh
 
       - name: Run Catch2 tests
-        run: ctest --test-dir build --output-on-failure
+        run: |
+          if (Test-Path "build/8051-simulator-tests.exe") {
+            ./build/8051-simulator-tests.exe
+          } else {
+            echo "⚠️ Test binary not found!"
+            exit 1
+          }
         shell: pwsh
