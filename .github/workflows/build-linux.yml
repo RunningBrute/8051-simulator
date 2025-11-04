@@ -19,6 +19,7 @@ jobs:
         run: |
           retry() { for i in {1..5}; do "$@" && break || { echo "Retry $i/5 failed, retrying in 10s..."; sleep 10; }; done; }
 
+          export DEBIAN_FRONTEND=noninteractive
           echo "🧹 Cleaning potential dpkg locks..."
           sudo rm -f /var/lib/dpkg/lock-frontend || true
           sudo rm -f /var/lib/apt/lists/lock || true
@@ -47,7 +48,7 @@ jobs:
           echo "🧱 Installing Ninja >= 1.11..."
           sudo apt-get remove -y ninja-build || true
           wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip
-          sudo unzip ninja-linux.zip -d /usr/local/bin/
+          sudo unzip -o ninja-linux.zip -d /usr/local/bin/
           sudo chmod +x /usr/local/bin/ninja
           ninja --version
 
