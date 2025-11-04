@@ -26,7 +26,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 # Catch2
-find_package(Catch2 CONFIG REQUIRED)
+find_package(Catch2 3 REQUIRED)
+
+if (EXISTS "/usr/include/catch2/catch_test_macros.hpp")
+    include_directories("/usr/include")
+endif()
 
 # Project module liblary
 add_library(8051_modules STATIC)

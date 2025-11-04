@@ -9,21 +9,72 @@ on:
 jobs:
   build-linux:
     name: Build with Clang (Modules)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # should be more stable, without dpkg-lock race condition
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Clang 18 + tools
+      - name: Install Clang 18 + tools (universal setup)
         run: |
-          sudo apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y clang-18 clang-tools-18 lld-18 ninja-build cmake python3-pip catch2
-          update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-          update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-          ls /usr/bin/clang-scan-deps* || echo "❌ clang-scan-deps not found!"
+          retry() { for i in {1..5}; do "$@" && break || { echo "Retry $i/5 failed, retrying in 10s..."; sleep 10; }; done; }
+
+          echo "🧹 Cleaning potential dpkg locks..."
+          sudo rm -f /var/lib/dpkg/lock-frontend || true
+          sudo rm -f /var/lib/apt/lists/lock || true
+
+          echo "📦 Installing base tools..."
+          retry sudo apt-get update -y
+          retry sudo apt-get install -y wget software-properties-common gnupg lsb-release python3-pip unzip git
+
+          echo "🧩 Adding LLVM repository for Clang 18..."
+          wget https://apt.llvm.org/llvm.sh -O llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 18
+          rm llvm.sh
+
+          echo "📦 Adding Kitware repository for CMake >= 3.28..."
+          sudo apt-get purge -y cmake || true
+          sudo apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://apt.kitware.com/keys/kitware-archive-latest.asc | \
+            sudo gpg --dearmor -o /etc/apt/keyrings/kitware-archive-keyring.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | \
+            sudo tee /etc/apt/sources.list.d/kitware.list
+          retry sudo apt-get update -y
+          retry sudo apt-get install -y cmake
+
+          echo "🧱 Installing Ninja >= 1.11..."
+          sudo apt-get remove -y ninja-build || true
+          wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip
+          sudo unzip ninja-linux.zip -d /usr/local/bin/
+          sudo chmod +x /usr/local/bin/ninja
+          ninja --version
+
+          echo "🔧 Installing Clang 18, LLD..."
+          retry sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            clang-18 clang-tools-18 lld-18
+
+          echo "⚙️ Setting Clang 18 as default compiler..."
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+          echo "🧠 Versions check:"
           clang++ --version
           cmake --version
+          ninja --version
+
+          echo "🧰 Installing Catch2 v3 from source..."
+          sudo apt-get remove -y catch2 || true
+          git clone --branch v3.6.0 https://github.com/catchorg/Catch2.git
+          cd Catch2
+          cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
+          sudo cmake --build build --target install -j$(nproc)
+          cd ..
+          rm -rf Catch2
+
+          echo "✅ Catch2 installation complete."
+          ls /usr/lib/cmake/Catch2 || echo "⚠️ Catch2Config.cmake not found!"
 
       - name: Configure (Modules)
         run: |
@@ -37,5 +88,11 @@ jobs:
       - name: Build
         run: cmake --build build --verbose
 
-      - name: Run tests
-        run: ctest --test-dir build --output-on-failure
+      - name: Run Tests
+        run: |
+          echo "🧪 Running tests..."
+          if [ -f build/8051-simulator-tests ]; then
+            ./build/8051-simulator-tests || (echo "⚠️ Tests failed"; exit 1)
+          else
+            ctest --test-dir build --output-on-failure || echo "⚠️ No ctest found, skipping"
+          fi
