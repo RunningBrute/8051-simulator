@@ -8,29 +8,54 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
     name: Build with MSVC (Modules)
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
+      - name: Install dependencies (Ninja + Git)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Ensure Ninja and Git
+        run: |
+          choco install ninja git -y
+        shell: pwsh
+
+      - name: Install Catch2 v3 from source
+        run: |
+          git clone --branch v3.6.0 https://github.com/catchorg/Catch2.git
+          cmake -S Catch2 -B Catch2/build -DCMAKE_INSTALL_PREFIX="C:/Catch2"
+          cmake --build Catch2/build --config Release --target install
+        shell: pwsh
 
       - name: Set up MSVC environment
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Configure CMake (MSVC)
+      - name: Configure (CMake + Ninja)
         run: |
           cmake -B build -G "Ninja" `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_CXX_STANDARD=23 `
-            -DCMAKE_CXX_FLAGS="/std:c++latest /EHsc /W4"
+            -DCMAKE_PREFIX_PATH="C:/Catch2/lib/cmake/Catch2" `
+            -DCMAKE_CXX_FLAGS="/std:c++latest /EHsc /W4 /permissive-" `
+            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE
         shell: pwsh
 
-      - name: Build project
-        run: cmake --build build --config Release
+      - name: Build
+        run: cmake --build build --config Release --verbose
+        shell: pwsh
+
+      - name: Run tests
+        run: |
+          if (Test-Path "build/8051-simulator-tests.exe") {
+            ./build/8051-simulator-tests.exe
+          } else {
+            echo "⚠️ No test binary found!"
+            exit 1
+          }
         shell: pwsh
