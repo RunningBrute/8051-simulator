@@ -17,6 +17,7 @@ jobs:
 
       - name: Install Clang 18 + CMake ≥ 3.28 + Ninja ≥ 1.11 + Catch2 v3
         run: |
+          export DEBIAN_FRONTEND=noninteractive
           sudo apt-get update
           sudo apt-get install -y wget software-properties-common gnupg lsb-release unzip git
 
@@ -40,7 +41,7 @@ jobs:
           # Ninja 1.12
           sudo apt-get remove -y ninja-build || true
           wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip
-          sudo unzip ninja-linux.zip -d /usr/local/bin/
+          sudo unzip -o ninja-linux.zip -d /usr/local/bin/
           sudo chmod +x /usr/local/bin/ninja
           ninja --version
 
