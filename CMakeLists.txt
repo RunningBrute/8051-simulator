@@ -40,9 +40,7 @@ target_sources(8051_modules
     PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
             src/cpu.cppm
-            src/registers/register8.cppm
-            src/registers/register16.cppm
-            src/registers/flag_register.cppm
+            src/registers.cppm
             src/memory.cppm
             src/instruction.cppm
             src/io.cppm
@@ -69,7 +67,8 @@ add_executable(8051-simulator-tests
     tests/test_system.cpp
     tests/test_cpu.cpp
     tests/test_memory.cpp
-    tests/test_register.cpp
+    tests/test_register8.cpp
+    tests/test_register16.cpp
     tests/test_flag_register.cpp
 )
 

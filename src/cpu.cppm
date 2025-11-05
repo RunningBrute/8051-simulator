@@ -5,9 +5,7 @@ module;
 #include <iostream>
 #include <span>
 
-import registers.register8;
-import registers.register16;
-import registers.flag_register;
+import registers;
 
 export module cpu;
 
