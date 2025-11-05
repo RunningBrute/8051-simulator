@@ -81,14 +81,18 @@ act -j build-linux --reuse
 
 ---
 
-ℹ️ About
+## ℹ️ About
+
 This project is a learning-oriented 8051 emulator written in modern C++23,
 leveraging modules to represent each hardware block (CPU, Memory, IO).
 The ultimate goal is to create a real, byte-accurate simulation of the original Intel 8051.
 
-🧑‍💻 Author
+## 🧑‍💻 Author
+
 RunningBrute
 https://github.com/RunningBrute
 
-📜 License
+
+## 📜 License
+
 MIT License © 2025 RunningBrute
