@@ -59,10 +59,12 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B build -G Ninja \
-            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_CXX_COMPILER=/usr/bin/clang++-18 \
+            -DCMAKE_C_COMPILER=/usr/bin/clang-18 \
             -DCMAKE_CXX_STANDARD=23 \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE
+            -DCMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API=TRUE \
+            -DCMAKE_CXX_MODULE_CACHE_DIR=build/module-cache \
+            -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build tests
         run: cmake --build build --target 8051-simulator-tests --verbose
