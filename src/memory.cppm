@@ -4,33 +4,51 @@ module;
 
 export module memory;
 
-export class Memory
+export template<bool ReadOnly>
+class Memory
 {
 public:
-    explicit Memory(std::size_t size = 256);
-    uint8_t read(uint16_t address) const;
-    void write(uint16_t address, uint8_t value);
+    explicit Memory(std::size_t size)
+        : storage(size, 0) 
+    {}
+    
+    [[nodiscard]] uint8_t read(uint16_t address) const noexcept
+    {
+        return (address < storage.size()) ? storage[address] : 0xFF;
+    }
 
-    uint8_t* data() { return memory.data(); }
-    const uint8_t* data() const { return memory.data(); }
-    std::size_t size() const { return memory.size(); }
+    // RAM can use write method
+    void write(uint16_t address, uint8_t value) requires (!ReadOnly)
+    {
+        if (address < storage.size()) storage[address] = value;
+    }
+
+    // from ROM we can only read, so write is deleted
+    void write(uint16_t, uint8_t) requires (ReadOnly) = delete;
+
+    [[nodiscard]] std::size_t size() const noexcept
+    { 
+        return storage.size();
+    }
+
+    uint8_t* data() noexcept
+    {
+        return storage.data();
+    }
+
+    const uint8_t* data() const noexcept
+    {
+        return storage.data();
+    }
+
+    void load(const std::vector<uint8_t>& data) requires (ReadOnly)
+    {
+        std::copy_n(data.begin(), std::min(data.size(), storage.size()), storage.begin());
+    }
+
 private:
-    std::vector<uint8_t> memory;
+    std::vector<uint8_t> storage;
 };
 
-module :private;
-
-Memory::Memory(std::size_t size) 
-    : memory(size, 0)
-{}
-
-uint8_t Memory::read(uint16_t address) const
-{
-    return (address < memory.size()) ? memory[address] : 0xFF;
-}
-
-void Memory::write(uint16_t address, uint8_t value)
-{
-    if (address < memory.size())
-        memory[address] = value;
-}
+export using RAM = Memory<false>;
+export using ROM = Memory<true>;

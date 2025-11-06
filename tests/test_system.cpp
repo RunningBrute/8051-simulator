@@ -1,35 +1,35 @@
 #include <catch2/catch_test_macros.hpp>
 
 import system;
-import io;
 import cpu;
 import memory;
+import memory.bus;
 
-TEST_CASE("System constructor wires memory into CPU", "[system]")
+TEST_CASE("System constructor wires RAM, ROM, and CPU correctly", "[system]")
 {
     System sys;
 
-    sys.memory.write(10, 0xAB);
+    sys.ram.write(10, 0xAB);
+    REQUIRE(sys.bus.read(0x100A) == 0xAB);
 
-    REQUIRE(sys.memory.read(10) == 0xAB);
+    REQUIRE_NOTHROW(sys.bus.read(0x0000));
 }
 
-TEST_CASE("System reset resets CPU and Memory", "[system]")
+TEST_CASE("System reset resets CPU registers and RAM", "[system]")
 {
     System sys;
 
     sys.cpu.get(Register8Name::A).write(0x99);
-    sys.memory.write(20, 0x44);
+    sys.ram.write(20, 0x44);
 
     sys.reset();
 
     REQUIRE(sys.cpu.get(Register8Name::A).read() == 0x00);
     REQUIRE(sys.cpu.get(Register8Name::SP).read() == 0x07);
-
-    REQUIRE(sys.memory.read(20) == 0x00);
+    REQUIRE(sys.ram.read(20) == 0x00);
 }
 
-TEST_CASE("System reset resets PC and DPTR too", "[system]")
+TEST_CASE("System reset resets PC and DPTR", "[system]")
 {
     System sys;
 
@@ -40,4 +40,10 @@ TEST_CASE("System reset resets PC and DPTR too", "[system]")
 
     REQUIRE(sys.cpu.get(Register16Name::PC).read() == 0x0000);
     REQUIRE(sys.cpu.get(Register16Name::DPTR).read() == 0x0000);
+}
+
+TEST_CASE("System ROM remains read-only after reset", "[system]")
+{
+    System sys;
+    REQUIRE_THROWS(sys.bus.write(0x0000, 0xAA)); // ROM = read-only
 }

@@ -1,11 +1,15 @@
 #include <catch2/catch_test_macros.hpp>
 
 import cpu;
+import memory;
+import memory.bus;
 
-TEST_CASE("CPU reset sets all registers to initial values", "[cpu]")
+TEST_CASE("CPU reset sets all registers to their default state", "[cpu]")
 {
-    std::vector<uint8_t> ram(65536);
-    CPU cpu(ram);
+    RAM ram(128);
+    ROM rom(4096);
+    MemoryBus bus(ram, rom);
+    CPU cpu(bus);
 
     cpu.get(Register8Name::A).write(0xFF);
     cpu.get(Register8Name::B).write(0xFF);
@@ -24,19 +28,21 @@ TEST_CASE("CPU reset sets all registers to initial values", "[cpu]")
     }
 
     REQUIRE(cpu.get(Register8Name::SP).read() == 0x07);
-
     REQUIRE(cpu.get(Register16Name::PC).read() == 0x0000);
     REQUIRE(cpu.get(Register16Name::DPTR).read() == 0x0000);
-
     REQUIRE(cpu.get(FlagName::PSW).read() == 0x00);
 }
 
-TEST_CASE("CPU executes NOP incrementing PC")
+TEST_CASE("CPU executes NOP instruction incrementing PC", "[cpu][fetch]")
 {
-    std::vector<uint8_t> ram(65536);
-    ram[0] = 0x00;
+    RAM ram(128);
+    ROM rom(4096);
+    MemoryBus bus(ram, rom);
 
-    CPU cpu(ram);
+    std::vector<uint8_t> program = {0x00};
+    rom.load(program);
+
+    CPU cpu(bus);
     cpu.reset();
 
     REQUIRE(cpu.get(Register16Name::PC).read() == 0x0000);

@@ -5,9 +5,10 @@ module;
 #include <iostream>
 #include <span>
 
-import registers;
-
 export module cpu;
+
+import registers;
+import memory.bus;
 
 using RegisterBank = std::array<Register8, 8>;
 
@@ -18,7 +19,7 @@ export enum class FlagName { PSW };
 export class CPU
 {
 public:
-    CPU(std::span<uint8_t> memory);
+    CPU(MemoryBus& bus);
     
     void reset();
     void step();
@@ -32,6 +33,7 @@ public:
     FlagRegister& get(FlagName f);
     const FlagRegister& get(FlagName f) const;
 private:
+    MemoryBus& bus;
 
     Register8 acc{"A"};        // Accumulator A
     Register8 b{"B"};          // Register B
@@ -42,16 +44,14 @@ private:
     RegisterBank rbank{Register8("R0"), Register8("R1"), Register8("R2"), Register8("R3"),
                        Register8("R4"), Register8("R5"), Register8("R6"), Register8("R7")}; // Register bank R0 - R7
 
-    std::span<uint8_t> memory;
-
     uint8_t fetch8();
     uint16_t fetch16();
 };
 
 module :private;
 
-CPU::CPU(std::span<uint8_t> memory) 
-    : memory(memory)
+CPU::CPU(MemoryBus& bus) 
+    : bus(bus)
 {}
 
 void CPU::reset()
@@ -81,9 +81,10 @@ void CPU::step()
 
 uint8_t CPU::fetch8()
 {
-    uint8_t v = memory[pc.read()];
-    pc.write(pc.read()+1);
-    return v;
+    uint8_t addr = pc.read();
+    uint8_t val = bus.read(addr);
+    pc.write(addr + 1);
+    return val;
 }
 
 uint16_t CPU::fetch16()
