@@ -1,6 +1,7 @@
 module;
 #include <vector>
 #include <cstdint>
+#include <algorithm>
 
 export module memory;
 
