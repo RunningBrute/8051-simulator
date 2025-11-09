@@ -8,6 +8,7 @@ module;
 export module cpu;
 
 import registers;
+import alu;
 import memory.bus;
 
 using RegisterBank = std::array<Register8, 8>;
@@ -34,6 +35,7 @@ public:
     const FlagRegister& get(FlagName f) const;
 private:
     MemoryBus& bus;
+    ALU alu;
 
     Register8 acc{"A"};        // Accumulator A
     Register8 b{"B"};          // Register B
@@ -51,7 +53,8 @@ private:
 module :private;
 
 CPU::CPU(MemoryBus& bus) 
-    : bus(bus)
+    : bus(bus),
+      alu(psw)
 {}
 
 void CPU::reset()
@@ -73,7 +76,21 @@ void CPU::step()
     switch(opcode)
     {
         case 0x00: // NOP
+        {
             return;
+        }
+        case 0x04: // INC A
+        {
+            uint8_t a = acc.read();
+            acc.write(alu.execute(ALUOperation::INC, a, 0));
+            break;
+        }
+        case 0x24: // ADD A, elem
+        {
+            uint8_t imm = fetch8();
+            uint8_t a = acc.read();
+            acc.write(alu.execute(ALUOperation::ADD, a, imm));
+        }
         default:
             throw std::runtime_error("Unimplemented opcode");
     }

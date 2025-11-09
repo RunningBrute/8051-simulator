@@ -40,6 +40,7 @@ target_sources(8051_modules
     PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
             src/cpu.cppm
+            src/alu.cppm
             src/registers.cppm
             src/memory.cppm
             src/memory_bus.cppm
@@ -66,6 +67,7 @@ target_link_libraries(8051-simulator
 add_executable(8051-simulator-tests
     tests/test_system.cpp
     tests/test_cpu.cpp
+    tests/test_alu.cpp
     tests/test_memory_rom.cpp
     tests/test_memory_ram.cpp
     tests/test_memory_bus.cpp
