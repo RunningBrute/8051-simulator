@@ -3,6 +3,7 @@ module;
 #include <string>
 #include <cstdint>
 #include <iostream>
+#include <sstream>
 #include <span>
 
 export module cpu;
@@ -73,6 +74,10 @@ void CPU::step()
 {
     auto opcode = fetch8();
 
+    std::cout << "[DEBUG] Executing opcode 0x"
+          << std::hex << static_cast<int>(opcode)
+          << " at PC=" << std::hex << (pc.read()-1) << std::endl;
+
     switch(opcode)
     {
         case 0x00: // NOP
@@ -82,18 +87,37 @@ void CPU::step()
         case 0x04: // INC A
         {
             uint8_t a = acc.read();
-            acc.write(alu.execute(ALUOperation::INC, a, 0));
+
+            uint8_t result = alu.execute(ALUOperation::INC, a, 0);
+            acc.write(result);
             break;
         }
         case 0x24: // ADD A, #imm
         {
             uint8_t imm = fetch8();
             uint8_t value = acc.read();
-            acc.write(alu.execute(ALUOperation::ADD, value, imm));
+
+            uint8_t result = alu.execute(ALUOperation::ADD, value, imm);
+            acc.write(result);
+            break;
+        }
+        case 0x34: // ADDC A, #imm
+        {
+            uint8_t imm = fetch8();
+            uint8_t value = acc.read();
+
+            uint8_t result = alu.execute(ALUOperation::ADDC, value, imm);
+            acc.write(result);
             break;
         }
         default:
-            throw std::runtime_error("Unimplemented opcode");
+        {
+            std::ostringstream oss;
+            oss << "Unimplemented opcode: 0x"
+                << std::uppercase << std::hex
+                << static_cast<int>(opcode);
+            throw std::runtime_error(oss.str());
+        }
     }
 }
 

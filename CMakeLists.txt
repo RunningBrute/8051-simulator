@@ -67,6 +67,9 @@ target_link_libraries(8051-simulator
 add_executable(8051-simulator-tests
     tests/test_system.cpp
     tests/test_cpu.cpp
+    tests/test_cpu_inc.cpp
+    tests/test_cpu_add.cpp
+    tests/test_cpu_addc.cpp
     tests/test_alu.cpp
     tests/test_memory_rom.cpp
     tests/test_memory_ram.cpp
