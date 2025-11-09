@@ -85,11 +85,12 @@ void CPU::step()
             acc.write(alu.execute(ALUOperation::INC, a, 0));
             break;
         }
-        case 0x24: // ADD A, elem
+        case 0x24: // ADD A, #imm
         {
             uint8_t imm = fetch8();
-            uint8_t a = acc.read();
-            acc.write(alu.execute(ALUOperation::ADD, a, imm));
+            uint8_t value = acc.read();
+            acc.write(alu.execute(ALUOperation::ADD, value, imm));
+            break;
         }
         default:
             throw std::runtime_error("Unimplemented opcode");
