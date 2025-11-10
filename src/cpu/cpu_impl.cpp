@@ -9,7 +9,6 @@ module cpu;
 import registers;
 import alu;
 import memory.bus;
-import cpu;
 import instructions.alu;
 import instructions.data;
 
