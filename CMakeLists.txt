@@ -39,8 +39,10 @@ add_library(8051_modules STATIC)
 target_sources(8051_modules
     PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
-            src/cpu.cppm
+            src/cpu/cpu_interface.cppm
+            src/cpu/cpu_impl.cppm
             src/alu.cppm
+            src/instructions/alu.cppm
             src/registers.cppm
             src/memory.cppm
             src/memory_bus.cppm
