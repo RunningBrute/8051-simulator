@@ -32,6 +32,8 @@ public:
     FlagRegister& get(FlagName f);
     const FlagRegister& get(FlagName f) const;
 
+    MemoryBus& get_bus();
+    const MemoryBus& get_bus() const;
     ALU& get_alu();
 private:
     MemoryBus& bus;

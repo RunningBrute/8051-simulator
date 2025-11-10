@@ -3,9 +3,12 @@ import cpu.interface;
 import memory.bus;
 import memory;
 
-RAM ram(256);
-ROM rom(256);
-MemoryBus bus(ram, rom);
+namespace
+{
+    RAM ram(256);
+    ROM rom(256);
+    MemoryBus bus(ram, rom);
+}
 
 static CPU make_cpu_with_program(std::initializer_list<uint8_t> bytes)
 {

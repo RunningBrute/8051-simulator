@@ -8,7 +8,9 @@ import registers;
 import alu;
 import memory.bus;
 import cpu.interface;
+
 import instructions.alu;
+import instructions.data;
 
 export module cpu.impl;
 
@@ -66,6 +68,7 @@ void CPU::build_dispatch_table()
 {
     dispatch_table.fill(nullptr);
     register_alu_instructions(dispatch_table);
+    register_data_instructions(dispatch_table);
 }
 
 uint8_t CPU::fetch8()
@@ -134,6 +137,16 @@ FlagRegister& CPU::get(FlagName f)
 const FlagRegister& CPU::get(FlagName f) const
 {
     return const_cast<CPU*>(this)->get(f);
+}
+
+MemoryBus& CPU::get_bus()
+{
+    return bus;
+}
+
+const MemoryBus& CPU::get_bus() const
+{
+    return bus;
 }
 
 ALU& CPU::get_alu()

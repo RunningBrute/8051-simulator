@@ -43,6 +43,7 @@ target_sources(8051_modules
             src/cpu/cpu_impl.cppm
             src/alu.cppm
             src/instructions/alu.cppm
+            src/instructions/data.cppm
             src/registers.cppm
             src/memory.cppm
             src/memory_bus.cppm
@@ -72,6 +73,7 @@ add_executable(8051-simulator-tests
     tests/test_cpu_inc.cpp
     tests/test_cpu_add.cpp
     tests/test_cpu_addc.cpp
+    tests/test_cpu_mov.cpp
     tests/test_alu.cpp
     tests/test_memory_rom.cpp
     tests/test_memory_ram.cpp
