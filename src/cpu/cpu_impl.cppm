@@ -4,15 +4,14 @@ module;
 #include <sstream>
 #include <iomanip>
 
+module cpu;
+
 import registers;
 import alu;
 import memory.bus;
 import cpu;
-
 import instructions.alu;
 import instructions.data;
-
-module cpu;
 
 CPU::CPU(MemoryBus& bus) 
     : bus(bus),
