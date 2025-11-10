@@ -3,6 +3,7 @@ module;
 #include <cstdint>
 #include <iostream>
 
+import alu;
 import cpu.interface;
 import registers;
 
