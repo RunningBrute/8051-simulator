@@ -40,7 +40,7 @@ target_sources(8051_modules
     PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
             src/cpu/cpu_interface.cppm
-            src/cpu/cpu_impl.cppm
+            src/cpu/cpu_impl.cpp
             src/alu.cppm
             src/instructions/alu.cppm
             src/instructions/data.cppm
