@@ -4,7 +4,7 @@ module;
 
 export module system;
 
-import cpu.interface;
+import cpu;
 import memory;
 import memory.bus;
 import io;

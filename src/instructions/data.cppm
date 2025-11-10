@@ -3,7 +3,7 @@ module;
 #include <cstdint>
 #include <iostream>
 
-import cpu.interface;
+import cpu;
 import registers;
 import memory.bus;
 

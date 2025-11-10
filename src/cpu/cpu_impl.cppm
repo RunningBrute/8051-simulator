@@ -7,15 +7,12 @@ module;
 import registers;
 import alu;
 import memory.bus;
-import cpu.interface;
+import cpu;
 
 import instructions.alu;
 import instructions.data;
 
-export module cpu.impl;
-
-
-module :private;
+module cpu;
 
 CPU::CPU(MemoryBus& bus) 
     : bus(bus),

@@ -4,7 +4,7 @@ module;
 #include <iostream>
 
 import alu;
-import cpu.interface;
+import cpu;
 import registers;
 
 export module instructions.alu;

@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-import cpu.interface;
+import cpu;
 import memory.bus;
 import memory;
 
