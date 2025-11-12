@@ -27,8 +27,8 @@ TEST_CASE("ADDC A,#imm adds with carry correctly", "[cpu][addc][flags]")
     // Program: ADDC A,#0x10
     auto cpu = make_cpu_with_program({0x34, 0x10});
 
-    auto& A = cpu.get(Register8Name::A);
-    auto& PSW = cpu.get(FlagName::PSW);
+    auto& A = cpu.get_context().registers.acc;
+    auto& PSW = cpu.get_context().registers.psw;
 
     A.write(0x05);
     PSW.set_carry(true); // carry-in = 1
@@ -46,8 +46,8 @@ TEST_CASE("ADDC A,#imm sets carry and overflow when needed", "[cpu][addc][flags]
     // Program: ADDC A,#0x80
     auto cpu = make_cpu_with_program({0x34, 0x80});
 
-    auto& A = cpu.get(Register8Name::A);
-    auto& PSW = cpu.get(FlagName::PSW);
+    auto& A = cpu.get_context().registers.acc;
+    auto& PSW = cpu.get_context().registers.psw;
 
     A.write(0x80);
     PSW.set_carry(false);
@@ -66,8 +66,8 @@ TEST_CASE("ADDC performs proper multi-byte addition (16-bit add)", "[cpu][addc]"
     //  0002: 34 HH   ADDC A,#high
     auto cpu = make_cpu_with_program({0x24, 0xFF, 0x34, 0x01});
 
-    auto& A = cpu.get(Register8Name::A);
-    auto& PSW = cpu.get(FlagName::PSW);
+    auto& A = cpu.get_context().registers.acc;
+    auto& PSW = cpu.get_context().registers.psw;
 
     // emulate 16-bit add: low=0xFF + 0x01 → carry, then high+carry
     A.write(0x00);
@@ -89,8 +89,8 @@ TEST_CASE("ADDC chain propagates carry correctly through multiple operations", "
     //  0004: 34 01  ADDC A,#1 
     auto cpu = make_cpu_with_program({0x34, 0x01, 0x34, 0x01, 0x34, 0x01});
 
-    auto& A = cpu.get(Register8Name::A);
-    auto& PSW = cpu.get(FlagName::PSW);
+    auto& A = cpu.get_context().registers.acc;
+    auto& PSW = cpu.get_context().registers.psw;
 
     A.write(0xFE);
     PSW.set_carry(true); // start with carry=1

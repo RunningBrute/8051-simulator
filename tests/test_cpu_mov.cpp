@@ -31,7 +31,7 @@ TEST_CASE("MOV A, #imm loads immediate into accumulator", "[cpu][mov]")
 
     cpu.step(); // execute MOV A, #0x42
 
-    REQUIRE(cpu.get(Register8Name::A).read() == 0x42);
+    REQUIRE(cpu.get_context().registers.acc.read() == 0x42);
 }
 
 TEST_CASE("MOV direct, A writes accumulator to internal memory", "[cpu][mov]")
@@ -40,7 +40,7 @@ TEST_CASE("MOV direct, A writes accumulator to internal memory", "[cpu][mov]")
     //  MOV direct(0x20), A
     auto cpu = make_cpu_with_program({0xF5, 0x20, 0x00});
 
-    cpu.get(Register8Name::A).write(0x99);
+    cpu.get_context().registers.acc.write(0x99);
     cpu.step(); // execute MOV 0x20, A
 
     REQUIRE(ram.read(0x20) == 0x99);
@@ -56,5 +56,5 @@ TEST_CASE("MOV A, direct loads value from internal memory", "[cpu][mov]")
 
     cpu.step(); // execute MOV A, 0x30
 
-    REQUIRE(cpu.get(Register8Name::A).read() == 0xAB);
+    REQUIRE(cpu.get_context().registers.acc.read() == 0xAB);
 }

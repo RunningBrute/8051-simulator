@@ -3,7 +3,7 @@ module;
 #include <iostream>
 #include <bit>
 
-export module alu;
+export module cpu.alu;
 
 import registers;
 

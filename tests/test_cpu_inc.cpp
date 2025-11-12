@@ -17,11 +17,11 @@ TEST_CASE("CPU executes INC A correctly", "[cpu][inc]")
     rom.data()[0x0000] = 0x04;
     rom.data()[0x0001] = 0x00;
 
-    auto& A = cpu.get(Register8Name::A);
+    auto& A = cpu.get_context().registers.acc;
     A.write(0x0F);
 
     cpu.step();  // execute INC A
 
     REQUIRE(A.read() == 0x10);
-    REQUIRE(cpu.get(FlagName::PSW).parity() == false); // 0x10 = 00010000 → 1 bit → odd
+    REQUIRE(cpu.get_context().registers.psw.parity() == false); // 0x10 = 00010000 → 1 bit → odd
 }

@@ -39,9 +39,12 @@ add_library(8051_modules STATIC)
 target_sources(8051_modules
     PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
-            src/cpu/cpu_interface.cppm
-            src/cpu/cpu_impl.cpp
-            src/alu.cppm
+            src/cpu/cpu.cppm
+            src/cpu/cpu_registers.cppm
+            src/cpu/cpu_alu.cppm
+            src/cpu/cpu_dispatcher.cppm
+            src/cpu/cpu_fetcher.cppm
+            src/cpu/cpu_context.cppm
             src/instructions/alu.cppm
             src/instructions/data.cppm
             src/registers.cppm

@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 import registers;
-import alu;
+import cpu.alu;
 
 TEST_CASE("ALU performs ADD and sets flags")
 {
