@@ -3,10 +3,11 @@ module;
 #include <cstdint>
 #include <iostream>
 
-export module instructions.alu;
-
 import cpu.context;
+import cpu.alu;
 import memory.bus;
+
+export module instructions.alu;
 
 export void register_alu_instructions(std::array<void(*)(CpuContext&), 256>& table);
 

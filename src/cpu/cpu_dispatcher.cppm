@@ -24,7 +24,7 @@ public:
         build_dispatch_table();
     }
     
-    [[nodiscard]] void dispatch(uint8_t opcode)
+    void dispatch(uint8_t opcode)
     {
         auto operation = dispatch_table[opcode];
 
