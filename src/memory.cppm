@@ -42,6 +42,7 @@ public:
         return storage.data();
     }
 
+    // only used by rom for load initial program
     void load(const std::vector<uint8_t>& data) requires (ReadOnly)
     {
         std::copy_n(data.begin(), std::min(data.size(), storage.size()), storage.begin());

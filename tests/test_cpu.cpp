@@ -48,3 +48,4 @@ TEST_CASE("CPU executes NOP instruction incrementing PC", "[cpu][fetch]")
     cpu.step();
     REQUIRE(cpu.get_context().registers.pc.read() == 0x0001);
 }
+

@@ -1,6 +1,7 @@
 module;
 #include <span>
 #include <cstdint>
+#include <vector>
 
 export module system;
 
@@ -23,6 +24,11 @@ public:
         cpu.reset();
         ram = RAM(128);
         rom = ROM(4096);
+    }
+
+    void load_program(const std::vector<uint8_t>& program)
+    {
+        rom.load(program);
     }
 
     RAM ram;

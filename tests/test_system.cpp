@@ -4,6 +4,7 @@ import system;
 import cpu;
 import memory;
 import memory.bus;
+import assembler;
 
 TEST_CASE("System constructor wires RAM, ROM, and CPU correctly", "[system]")
 {
@@ -46,4 +47,20 @@ TEST_CASE("System ROM remains read-only after reset", "[system]")
 {
     System sys;
     REQUIRE_THROWS(sys.bus.write(0x0000, 0xAA)); // ROM = read-only
+}
+
+TEST_CASE("Assembler loads MOV correctly into CPU", "[.][system][asm]")
+{
+    Assembler assembler;
+    System sys;
+
+    auto prg = assembler.assemble_file("examples/test.asm");
+    sys.load_program(prg);
+
+    sys.cpu.reset();
+    sys.cpu.step(); // MOV A,#0x22
+    REQUIRE(sys.cpu.get_context().registers.acc.read() == 0x22);
+
+    sys.cpu.step(); // MOV 0x20,A
+    REQUIRE(sys.rom.read(0x20) == 0x22);
 }

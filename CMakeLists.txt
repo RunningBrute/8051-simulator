@@ -47,6 +47,10 @@ target_sources(8051_modules
             src/cpu/cpu_context.cppm
             src/instructions/alu.cppm
             src/instructions/data.cppm
+            src/assembler/assembler.cppm
+            src/assembler/tokenizer.cppm
+            src/assembler/parser.cppm
+            src/assembler/encoder.cppm
             src/registers.cppm
             src/memory.cppm
             src/memory_bus.cppm
