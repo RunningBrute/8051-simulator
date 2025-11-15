@@ -45,7 +45,7 @@ cmake --build build
 ### Run
 
 ```bash
-./build/Debug/8051-simulator
+./build/Debug/8051-simulator examples\\test.asm
 ```
 
 ### Run tests
