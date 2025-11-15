@@ -11,18 +11,31 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    Assembler assembler;
-    System system;
-
-    auto program = assembler.assemble_file(argv[1]);
-    system.load_program(program);
-    system.reset();
-
-    std::cout << "8051 Simulator started";
-    for (;;)
+    try
     {
-        std::cout << " . ";
-        system.cpu.step();
+        Assembler assembler;
+        System system;
+
+        auto program = assembler.assemble_file(argv[1]);
+        system.load_program(program);
+        system.reset();
+
+        std::cout << "8051 Simulator started";
+        for (;;)
+        {
+            std::cout << " . ";
+            system.cpu.step();
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "[EXCEPTION] std::exception: " << e.what() << std::endl;
+        return 2;
+    }
+    catch (...)
+    {
+        std::cerr << "[EXCEPTION] unknown exception " << std::endl;
+        return 3;
     }
 
     return 0;
