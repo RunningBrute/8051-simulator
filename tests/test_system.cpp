@@ -58,9 +58,10 @@ TEST_CASE("Assembler loads MOV correctly into CPU", "[.][system][asm]")
     sys.load_program(prg);
 
     sys.cpu.reset();
+
     sys.cpu.step(); // MOV A,#0x22
     REQUIRE(sys.cpu.get_context().registers.acc.read() == 0x22);
 
     sys.cpu.step(); // MOV 0x20,A
-    REQUIRE(sys.rom.read(0x20) == 0x22);
+    REQUIRE(sys.ram.read(0x20) == 0x22);
 }
