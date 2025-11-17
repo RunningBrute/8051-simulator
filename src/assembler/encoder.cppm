@@ -33,6 +33,9 @@ public:
 
             case ParsedType::MOV_A_DIRECT:
                 return {0xE5, static_cast<uint8_t>(p.operand)};
+
+            case ParsedType::SJMP:
+                return {0xFE};
         }
 
         throw std::runtime_error("Unknown parsed type");

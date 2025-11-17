@@ -36,9 +36,17 @@ static void op_mov_a_direct(CpuContext& context)
     context.registers.acc.write(value);
 }
 
+// SJMP $
+static void op_sjmp(CpuContext& context) {
+    int8_t rel = context.fetcher.fetch8();
+    uint16_t pc = context.registers.pc.read();
+    context.registers.pc.write(pc + rel);
+}
+
 export void register_data_instructions(std::array<void(*)(CpuContext&), 256>& table)
 {
     table[0x74] = &op_mov_a_imm;
     table[0xF5] = &op_mov_direct_a;
     table[0xE5] = &op_mov_a_direct;
+    table[0x80] = &op_sjmp;
 }
