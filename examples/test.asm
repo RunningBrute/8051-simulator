@@ -2,5 +2,5 @@ MOV A,#0x22
 MOV 0x20,A
 MOV A,0x20
 INC A
-ADD A,#1
+INC A
 SJMP $
