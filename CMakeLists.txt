@@ -56,6 +56,7 @@ target_sources(8051_modules
             src/memory_bus.cppm
             src/io.cppm
             src/system.cppm
+            src/logger.cppm
 )
 
 # Settings
@@ -88,6 +89,7 @@ add_executable(8051-simulator-tests
     tests/test_register8.cpp
     tests/test_register16.cpp
     tests/test_flag_register.cpp
+    tests/test_logger.cpp
 )
 
 target_link_libraries(8051-simulator-tests
