@@ -24,8 +24,7 @@ static void op_mov_direct_a(CpuContext& context)
 {
     uint8_t addr = context.fetcher.fetch8();
     uint8_t value = context.registers.acc.read();
-    context.bus.write(0x1000 + addr, value); 
-    context.fetcher.fetch8(); // just for debug logs
+    context.bus.write(0x1000 + addr, value);
 }
 
 // MOV A, direct (0xE5)

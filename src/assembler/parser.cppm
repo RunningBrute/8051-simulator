@@ -38,8 +38,7 @@ public:
         {
             current_line += t[i] + " ";
         }
-        AppLogger::debug("Line to parse: \r");
-        AppLogger::debug(current_line);
+        AppLogger::debug("Line to parse: " + current_line);
 
         if (t.empty())
         {

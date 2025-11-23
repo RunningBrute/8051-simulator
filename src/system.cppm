@@ -1,6 +1,8 @@
 module;
 #include <span>
 #include <cstdint>
+#include <string>
+#include <format>
 #include <vector>
 
 export module system;
@@ -34,6 +36,17 @@ public:
     {
         rom.load(program);
         AppLogger::info("Program loaded into ROM memory.");
+        print_programm(program);
+    }
+
+    void print_programm(const std::vector<uint8_t>& program)
+    {   
+        std::string prog;
+        for (std::size_t i = 0; i < program.size(); i++)
+        {
+            prog += std::format("0x{:02X} ", program[i]);
+        }
+        AppLogger::debug("Program: " + prog);
     }
 
     RAM ram;

@@ -35,7 +35,7 @@ public:
                 return {0xE5, static_cast<uint8_t>(p.operand)};
 
             case ParsedType::SJMP:
-                return {0xFE};
+                return {0x80};
         }
 
         throw std::runtime_error("Unknown parsed type");
