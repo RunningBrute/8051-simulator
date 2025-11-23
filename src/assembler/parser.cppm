@@ -33,6 +33,14 @@ export class Parser
 public:
     ParsedInstruction parse(std::vector<std::string>& t, size_t line)
     {
+        std::string current_line;
+        for (std::size_t i = 0; i < t.size(); i++)
+        {
+            current_line += t[i] + " ";
+        }
+        AppLogger::debug("Line to parse: \r");
+        AppLogger::debug(current_line);
+
         if (t.empty())
         {
             throw std::runtime_error("Empty line");
@@ -67,10 +75,10 @@ public:
         }
 
         // MOV A,#imm
-        if (t[0] == "MOV" && t.size() == 3 && t[1] == "A" && t[2][0] == '#')
+        if (t[0] == "MOV" && t.size() == 4 && t[1] == "A" && t[2] == "," && t[3][0] == '#')
         {
             AppLogger::debug("parse MOV_A_IMM");
-            return {ParsedType::MOV_A_IMM, parse_number(t[2].substr(1)), line};
+            return {ParsedType::MOV_A_IMM, parse_number(t[3].substr(1)), line};
         }
 
         // MOV direct,A
