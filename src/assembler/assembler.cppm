@@ -17,7 +17,9 @@ public:
     {
         std::ifstream f(path);
         if (!f)
+        {
             throw std::runtime_error("Cannot open file: " + path);
+        }
 
         Tokenizer tokenizer;
         Parser parser;

@@ -7,6 +7,8 @@ module;
 
 export module assembler.parser;
 
+import logger;
+
 export enum class ParsedType
 {
     NOP,
@@ -32,61 +34,63 @@ public:
     ParsedInstruction parse(std::vector<std::string>& t, size_t line)
     {
         if (t.empty())
+        {
             throw std::runtime_error("Empty line");
+        }
 
         // NOP
         if (t[0] == "NOP")
         {
-            std::cout << "[Debug] encode NOP" << std::endl;
+            AppLogger::debug("parse NOP");
             return {ParsedType::NOP, 0, line};
         }
 
         // INC A
         if (t[0] == "INC" && t.size() == 2 && t[1] == "A")
         {
-            std::cout << "[Debug] encode INC_A" << std::endl;
+            AppLogger::debug("parse INC_A");
             return {ParsedType::INC_A, 0, line};
         }
 
         // ADD A,#imm
         if (t[0] == "ADD" && t.size() == 3 && t[1] == "A" && t[2][0] == '#')
         {
-            std::cout << "[Debug] encode ADDC_IMM_A" << std::endl;
+            AppLogger::debug("parse ADDC_IMM_A");
             return {ParsedType::ADD_A_IMM, parse_number(t[2].substr(1)), line};
         }
 
         // ADDC A,#imm
         if (t[0] == "ADDC" && t.size() == 3 && t[1] == "A" && t[2][0] == '#')
         {
-            std::cout << "[Debug] encode ADDC_A_IMM" << std::endl;
+            AppLogger::debug("parse ADDC_A_IMM");
             return {ParsedType::ADDC_A_IMM, parse_number(t[2].substr(1)), line};
         }
 
         // MOV A,#imm
         if (t[0] == "MOV" && t.size() == 3 && t[1] == "A" && t[2][0] == '#')
         {
-            std::cout << "[Debug] encode MOV_A_IMM" << std::endl;
+            AppLogger::debug("parse MOV_A_IMM");
             return {ParsedType::MOV_A_IMM, parse_number(t[2].substr(1)), line};
         }
 
         // MOV direct,A
         if (t[0] == "MOV" && t.size() == 4 && t[2] == "," && t[3] == "A")
         {
-            std::cout << "[Debug] encode MOV_DIRECT_A" << std::endl;
+            AppLogger::debug("parse MOV_DIRECT_A");
             return {ParsedType::MOV_DIRECT_A, parse_number(t[1]), line};
         }
 
         // MOV A,direct
         if (t[0] == "MOV" && t.size() == 4 && t[1] == "A" && t[2] == ",")
         {
-            std::cout << "[Debug] encode MOV_A_DIRECT" << std::endl;
+            AppLogger::debug("parse MOV_A_DIRECT");
             return {ParsedType::MOV_A_DIRECT, parse_number(t[3]), line};
         }
 
         //SJMP
         if (t[0] == "SJMP" && t.size() == 2 && t[1] == "$")
         {
-            std::cout << "[Debug] encode SJMP" << std::endl;
+            AppLogger::debug("parse SJMP");
             return {ParsedType::SJMP, 0, line};
         }
 

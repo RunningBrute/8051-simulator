@@ -6,8 +6,6 @@ module;
 
 export module assembler.tokenizer;
 
-
-
 export class Tokenizer
 {
 public:
