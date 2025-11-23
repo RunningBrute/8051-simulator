@@ -12,6 +12,7 @@ int main(int argc, char** argv)
     if (argc < 2)
     {
         AppLogger::info("Usage: f.e. 8051-simulator.exe example/mov_test.asm");
+        AppLogger::stop();
         return 1;
     }
 
@@ -34,13 +35,16 @@ int main(int argc, char** argv)
     {
         std::string msg = std::string("[EXCEPTION] std::exception: ") + e.what();
         AppLogger::error(msg);
+        AppLogger::stop();
         return 2;
     }
     catch (...)
     {
         AppLogger::error("[EXCEPTION] unknown exception ");
+        AppLogger::stop();
         return 3;
     }
 
+    AppLogger::stop();
     return 0;
 }
