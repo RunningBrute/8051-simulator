@@ -18,14 +18,15 @@ int main(int argc, char** argv)
 
     try
     {
+        AppLogger::info("8051 Simulator started");
+
         Assembler assembler;
         System system;
 
         auto program = assembler.assemble_file(argv[1]);
-        system.load_program(program);
         system.reset();
+        system.load_program(program);
 
-        AppLogger::info("8051 Simulator started");
         for (;;)
         {
             system.cpu.step();

@@ -3,6 +3,7 @@ module;
 #include <array>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 export module cpu;
 
@@ -12,6 +13,7 @@ import cpu.registers;
 import cpu.dispatcher;
 import cpu.fetcher;
 import cpu.context;
+import logger;
 
 export class CPU
 {
@@ -53,10 +55,13 @@ void CPU::step()
     auto pc_val = context.registers.pc.read();
     auto opcode = context.fetcher.fetch8();
 
-    std::cout << "[DEBUG] Executing opcode 0x"
-              << std::uppercase << std::hex
-              << static_cast<int>(opcode)
-              << " at PC=0x" << std::setw(4) << pc_val << std::endl;
+    std::ostringstream oss;
+    oss << "Executing opcode 0x"
+        << std::uppercase << std::hex
+        << static_cast<int>(opcode)
+        << " at PC=0x" << std::setw(4) << std::setfill('0') << pc_val;
+
+    AppLogger::debug(oss.str()); 
 
     dispatcher.dispatch(opcode);
 }
