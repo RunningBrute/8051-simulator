@@ -97,16 +97,15 @@ class Logger
     inline static std::mutex mtx;
     inline static std::condition_variable cv;
     inline static std::queue<LogMessage> queue;
-    inline static std::atomic<bool> running = false;
     inline static std::jthread worker;
 
-    static void worker_thread()
+    static void worker_thread(std::stop_token st)
     {
-        while (running.load())
+        while (!st.stop_requested() || !queue.empty())
         {
             std::unique_lock lock(mtx);
-            cv.wait(lock, []{
-                return !queue.empty() || !running.load();
+            cv.wait(lock, [&]{
+                return !queue.empty() || st.stop_requested();
             });
 
             while (!queue.empty())
@@ -126,16 +125,13 @@ class Logger
 public:
     static void start()
     {
-        running.store(true);
         worker = std::jthread(worker_thread);
     }
 
     static void stop()
     {
-        running.store(false);
         cv.notify_all();
-        if (worker.joinable())
-            worker.join();
+        worker.request_stop();
     }
 
     static void push(LogLevel lvl, std::string_view txt)
