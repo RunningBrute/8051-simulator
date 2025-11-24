@@ -4,6 +4,7 @@ module;
 #include <string>
 #include <format>
 #include <vector>
+#include <sstream>
 
 export module system;
 
@@ -41,12 +42,12 @@ public:
 
     void print_programm(const std::vector<uint8_t>& program)
     {   
-        std::string prog;
+        std::ostringstream oss;
         for (std::size_t i = 0; i < program.size(); i++)
         {
-            prog += std::format("0x{:02X} ", program[i]);
+            oss << std::uppercase << std::hex << static_cast<int>(program[i]);
         }
-        AppLogger::debug("Program: " + prog);
+        AppLogger::debug("Line to parse: " + oss.str());
     }
 
     RAM ram;
