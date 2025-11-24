@@ -2,7 +2,6 @@ module;
 #include <span>
 #include <cstdint>
 #include <string>
-#include <format>
 #include <vector>
 #include <sstream>
 
