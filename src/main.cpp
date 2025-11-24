@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 import assembler;
 import system;
@@ -6,7 +7,8 @@ import logger;
 
 int main(int argc, char** argv)
 {
-    FileSink::init("app.log");
+    std::filesystem::create_directory("logs");
+    FileSink::init("logs/app.log");
     AppLogger::start();
 
     if (argc < 2)
