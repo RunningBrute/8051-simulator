@@ -1,5 +1,6 @@
 #include <catch2/catch_all.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <thread>
@@ -9,15 +10,16 @@ import logger;
 
 TEST_CASE("Logger logs", "[logger]")
 {
-    FileSink::init("test.log");
+    std::filesystem::create_directory("logs");
+    FileSink::init("logs/test.log");
     AppLogger::start();
 
     AppLogger::info("test message");
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     AppLogger::stop();
 
-    std::ifstream f("test.log");
+    std::ifstream f("logs/test.log");
     REQUIRE(f.good());
 
     std::string line;
