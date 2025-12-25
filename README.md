@@ -82,9 +82,10 @@ act -j build-linux --reuse
 
 ## ℹ️ About
 
-This project is a learning-oriented 8051 emulator written in modern C++23,
-leveraging modules to represent each hardware block (CPU, Memory, IO).
-The ultimate goal is to create a real, byte-accurate simulation of the original Intel 8051.
+This project is a learning-oriented Intel 8051 emulator written in modern C++23.  
+It uses C++ modules to model individual hardware blocks such as the CPU core and memory, focusing on instruction decoding, state transitions and deterministic execution.
+
+The scope is intentionally limited to the CPU core to keep the architecture explicit and easy to reason about, making the project suitable for exploring system-level design trade-offs in CPU emulation.
 
 ## 🧑‍💻 Author
 
