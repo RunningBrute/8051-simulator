@@ -5,8 +5,8 @@
 [![Test Linux](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-linux.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-linux.yml)
 [![Test Windows](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-windows.yml/badge.svg)](https://github.com/RunningBrute/8051-simulator/actions/workflows/test-windows.yml)
 
-A basic **Intel 8051 microcontroller simulator**. This project aims to emulate
-the 8051 CPU architecture at the register and instruction level - purely in software, just for fun and educational purposes.
+A minimal Intel 8051 microcontroller simulator focusing on CPU state modeling and instruction-level execution.  
+The project emulates the 8051 architecture at the register and instruction level, with an emphasis on deterministic behavior and clear separation of hardware responsibilities.
 
 ---
 
@@ -14,7 +14,6 @@ the 8051 CPU architecture at the register and instruction level - purely in soft
 
 - 🧩 Modular design (C++23 modules)
 - ⚙️ Emulated CPU core with registers
-- 🧠 Simple memory and I/O model
 - 💻 Cross-platform: Windows & Linux
 - 🧪 Unit tests powered by Catch2
 - 🧱 Modern CMake + GitHub Actions CI
